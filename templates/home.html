@@ -11,8 +11,16 @@
                 <div class="card mb-5 sns-card">
                     <div class="row pt-2 pr-2 pl-2 pb-2">
                         <div class="col">
-                            <span>{{ post.user.username }}</span>
-
+                            <a href="{% url 'users:mypage' post.user.id %}">{{ post.user.username }}</a>
+                            <div class="follow-btn">
+                                {% if user != post.user %}
+                                    {% if user.profile in post.user.profile.followers.all %}
+                                        <a href="{% url 'users:follow_toggle' post.user.id %}" class="btn btn-primary">팔로우 취소</a>
+                                    {% else %}
+                                        <a href="{% url 'users:follow_toggle' post.user.id %}" class="btn btn-outline-primary">팔로우 하기</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
                             <span class="float-right">
                                 {% if user == post.user %}
                                     <a href="{% url 'posts:delete' post.pk %}" class="btn btn-primary" style="margin-left: 15px;">삭제</a>
@@ -36,6 +44,9 @@
                                 </a>
                             </span>
                             <span style="vertical-align: super;">{{ post.like_count }}명이 좋아합니다.</span>
+                            {% for like_user in post.like_user_set.all %}
+                                <p>{{ like_user.username }}님이 조아해여</p>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="card-body">
@@ -65,7 +76,7 @@
                 <div class="card-body">
                     {% if user.is_authenticated %}
                         <h5 class="card-title">{{ user.username }}님 환영합니다.</h5>
-                        <a href="#" class="btn btn-primary">마이페이지</a>
+                        <a href="{% url 'users:mypage' user.id %}" class="btn btn-primary">마이페이지</a>
                     {% else %}
                         <a href="{% url 'account_login' %}" class="btn btn-primary">로그인</a>
                     {% endif %}
